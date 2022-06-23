@@ -5,17 +5,30 @@ from .PasswordManager import  password
 from rest_framework.response import Response
 from .models import usersDatabase
 import time
-
-
+from bson import ObjectId
+class GetProfile(APIView):
+    # Path /users/profile/
+    def get(self,request):
+        data = request.GET
+        w=(ObjectId(data['id']))
+        ans = usersDatabase.objects.filter(_id=w).all()[0]
+        print(ans.__dict__)
+        return Response(
+            {
+                "Name":ans.Name,
+                "Email":ans.Email,
+                "DOB":ans.DOB,
+                "Gender":ans.Gender
+            }
+        )
 class AddRetrive(APIView):
     def get(self,request):
+
 
         data=dict(request.GET)
         data['email'] = request.query_params.get('email')
         data['password'] = request.query_params.get("password")
         ans = usersDatabase.objects.filter(Email=data['email']).first()
-
-
         salt = ans.salt
         hash = ans.hash
 
