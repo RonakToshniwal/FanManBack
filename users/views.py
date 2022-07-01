@@ -3,9 +3,33 @@ from rest_framework.views import APIView
 import json
 from .PasswordManager import  password
 from rest_framework.response import Response
-from .models import usersDatabase
+from .models import usersDatabase,Expense
 import time
 from bson import ObjectId
+
+
+class ExpenseRetrive(APIView):
+    def get(self,request):
+        data = json.loads(request.body.decode('utf-8'))
+        Userid=data['userId']
+        ans=Expense.objects.all().filter(Userid=Userid)
+        print(len(ans))
+        for i in ans:
+            print(i)
+        return Response({"a"})
+        return Response({'Amount': ans.Amount, 'Remark': ans.Remark, 'Type': ans.Type, 'Category': ans.Category})
+    def post(self, request):
+        data = json.loads(request.body.decode('utf-8'))
+        Expense.objects.create(
+        Userid= data["Userid"],
+        Amount= data["Amount"],
+        Remark= data["Remark"],
+        Type=data["Type"],
+        Category= data["Category"]
+    )
+        return Response(data)
+
+
 class GetProfile(APIView):
     # Path /users/profile/
     def get(self,request):
